@@ -20,4 +20,12 @@ public class TitleService {
     public List<Title> findAll() {
         return titleRepository.findAll();
     }
+
+    public Title findOne(Long code) {
+        return titleRepository.findOne(code);
+    }
+
+    public void delete(Title title) {
+        titleRepository.delete(title);
+    }
 }

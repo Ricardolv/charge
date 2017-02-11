@@ -27,3 +27,5 @@ nbdist/
 
 #### Mac ###
 .DS_Store
+src/main/resources/static/js/exclusion-modal-title.js
+src/main/resources/templates/layout/layout-message.html

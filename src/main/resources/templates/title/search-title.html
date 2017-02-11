@@ -2,10 +2,11 @@
 <html lang="pt"
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:data="http://www.thymeleaf.org/extras/data-attribute"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}">
     <head>
-        <title>Search Titulo !</title>
+        <title>Search Titulo </title>
     </head>
     <body>
         <section layout:fragment="content">
@@ -31,7 +32,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="title : ${titles}">
+                            <tr th:each="title : ${titleList}">
                                 <td class="text-center" th:text="${title.code}"></td>
                                 <td th:text="${title.description}"></td>
                                 <td class="text-center" th:text="${{title.dateExpiration}}"></td>
@@ -40,16 +41,54 @@
                                     <span class="label" th:text="#{|${title.status}|}"
                                           th:classappend="${title.pending? 'label-danger' : 'label-success'}"></span>
                                 </td>
-                                <td class="text-center"></td>
+
+                                <td class="text-center">
+                                    <a class="btn btn-link btn-xs" th:href="@{/titles/{code}(code=${title.code})}">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </a>
+                                    <a class="btn btn-link btn-xs" data-toggle="modal" data-target="#confirmsModalExclusion"
+                                       th:attr="data-codigo=${title.code}, data-descricao=${title.description}">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </a>
+                                </td>
+
                             </tr>
                             <tr>
-                                <td colspan="6" th:if="${#lists.isEmpty(titles)}">Nenhum título foi encontrado</td>
+                                <td colspan="6" th:if="${#lists.isEmpty(titleList)}">Nenhum título foi encontrado</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
+            <div class="modal fade" id="confirmsModalExclusion" tabindex="-1" data-keyboard="false" data-backdrop="static">
+                <div class="modal-dialog">
+                    <form th:action="@{/titles}" method="POST">
+                        <input type="hidden" name="_method" value="DELETE"/>
+
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Você tem certeza?</h4>
+                            </div>
+
+                            <div class="modal-body">
+                                <span>Tem certeza que deseja apagar o título?</span>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-link" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">Excluir</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
         </section>
+        <th:block layout:fragment="javascript-extra">
+            <script th:src="@{/js/exclusion-modal-title.js}"></script>
+        </th:block>
+
     </body>
 </html>
