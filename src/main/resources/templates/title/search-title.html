@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+    <head>
+        <title>Search Titulo !</title>
+    </head>
+    <body>
+        <section layout:fragment="content">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="clearfix">
+                        <h1 class="panel-title aw-title-panel">Pesquisa de títulos</h1>
+                        <a class="btn btn-link aw-link-panel" th:href="@{/titles/new}">Novo título</a>
+                    </div>
+                </div>
+
+                <div class="panel-body">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                        <tr>
+                            <th class="text-center col-md-1">#</th>
+                            <th>Decrição</th>
+                            <th class="text-center col-md-2">Data de vencimento</th>
+                            <th class="text-right col-md-2">Valor</th>
+                            <th class="text-center col-md-2">Status</th>
+                            <th class="col-md-1"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="title : ${titles}">
+                                <td class="text-center" th:text="${title.code}"></td>
+                                <td th:text="${title.description}"></td>
+                                <td class="text-center" th:text="${{title.dateExpiration}}"></td>
+                                <td class="text-right"  th:text="|R$ ${{title.value}}|"></td>
+                                <td class="text-center" >
+                                    <span class="label" th:text="#{|${title.status}|}"
+                                          th:classappend="${title.pending? 'label-danger' : 'label-success'}"></span>
+                                </td>
+                                <td class="text-center"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="6" th:if="${#lists.isEmpty(titles)}">Nenhum título foi encontrado</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+    </body>
+</html>

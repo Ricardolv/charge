@@ -5,6 +5,8 @@ import com.richard.charge.repository.TitleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TitleService {
 
@@ -13,5 +15,9 @@ public class TitleService {
 
     public Title save(Title title) {
         return titleRepository.save(title);
+    }
+
+    public List<Title> findAll() {
+        return titleRepository.findAll();
     }
 }

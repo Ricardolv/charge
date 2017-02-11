@@ -35,4 +35,10 @@ public class Title {
     @Enumerated(EnumType.STRING)
     private StatusTitle status;
 
+    /** Business **/
+
+    public boolean isPending() {
+        return StatusTitle.PENDING.equals(this.status);
+    }
+
 }
