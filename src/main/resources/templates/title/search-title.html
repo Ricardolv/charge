@@ -20,50 +20,79 @@
                 </div>
 
                 <div class="panel-body">
-                    <table class="table table-bordered table-striped">
-                        <thead>
-                        <tr>
-                            <th class="text-center col-md-1">#</th>
-                            <th>Decrição</th>
-                            <th class="text-center col-md-2">Data de vencimento</th>
-                            <th class="text-right col-md-2">Valor</th>
-                            <th class="text-center col-md-2">Status</th>
-                            <th class="col-md-1"></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="title : ${titleList}">
-                                <td class="text-center" th:text="${title.code}"></td>
-                                <td th:text="${title.description}"></td>
-                                <td class="text-center" th:text="${{title.dateExpiration}}"></td>
-                                <td class="text-right"  th:text="|R$ ${{title.value}}|"></td>
-                                <td class="text-center" >
-                                    <span class="label" th:text="#{|${title.status}|}"
-                                          th:classappend="${title.pending? 'label-danger' : 'label-success'}"></span>
-                                </td>
 
-                                <td class="text-center">
-                                    <a class="btn btn-link btn-xs" th:href="@{/titles/{code}(code=${title.code})}">
-                                        <span class="glyphicon glyphicon-pencil"></span>
-                                    </a>
-                                    <a class="btn btn-link btn-xs" data-toggle="modal" data-target="#confirmsModalExclusion"
-                                       th:attr="data-codigo=${title.code}, data-descricao=${title.description}">
-                                        <span class="glyphicon glyphicon-remove"></span>
-                                    </a>
-                                </td>
+                    <form method="GET" class="form-horizontal" th:action="@{/titles}" th:object="${filter}">
+                        <div class="form-group">
+                            <div class="col-sm-4">
+                                <div class="input-group">
+                                    <input class="form-control" placeholder="Qual título você está procurando?"
+                                           autofocus="autofocus" th:field="*{description}"></input>
+                                    <span class="input-group-btn">
+	   							<button type="submit" class="btn btn-default">
+	   								<i class="glyphicon glyphicon-search"></i>
+	   							</button>
+	   						</span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
 
-                            </tr>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
                             <tr>
-                                <td colspan="6" th:if="${#lists.isEmpty(titleList)}">Nenhum título foi encontrado</td>
+                                <th class="text-center col-md-1">#</th>
+                                <th>Decrição</th>
+                                <th class="text-center col-md-2">Data de vencimento</th>
+                                <th class="text-right col-md-2">Valor</th>
+                                <th class="text-center col-md-2">Status</th>
+                                <th class="col-md-1"></th>
                             </tr>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                <tr th:each="title : ${titleList}">
+                                    <td class="text-center" th:text="${title.code}"></td>
+                                    <td th:text="${title.description}"></td>
+                                    <td class="text-center" th:text="${{title.dateExpiration}}"></td>
+                                    <td class="text-right"  th:text="|R$ ${{title.value}}|"></td>
+                                    <td class="text-center" th:attr="data-role=${title.code}">
+                                        <span class="label" th:text="#{|${title.status}|}"
+                                              th:classappend="${title.pending ? 'label-danger' : 'label-success'}"></span>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <a class="btn btn-link btn-xs" th:href="@{/titles/{code}(code=${title.code})}"
+                                           title="Editar" rel="tooltip" data-placement="top">
+
+                                            <span class="glyphicon glyphicon-pencil"></span>
+                                        </a>
+                                        <a class="btn btn-link btn-xs" data-toggle="modal" data-target="#confirmsModalExclusion"
+                                           th:attr="data-code=${title.code}, data-descricao=${title.description}"
+                                           title="Excluir" rel="tooltip" data-placement="top">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </a>
+
+                                        <a class="btn btn-link btn-xs js-atualizar-status" th:if="${title.pending}"
+                                           title="Receber" rel="tooltip" data-placement="top"
+                                           th:attr="data-code=${title.code}"
+                                           th:href="@{/titles/{code}/get(code=${title.code})}">
+                                            <span class="glyphicon glyphicon-check"></span>
+                                        </a>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td colspan="6" th:if="${#lists.isEmpty(titleList)}">Nenhum título foi encontrado</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    <div class="table-responsive">
                 </div>
             </div>
 
             <div class="modal fade" id="confirmsModalExclusion" tabindex="-1" data-keyboard="false" data-backdrop="static">
                 <div class="modal-dialog">
-                    <form th:action="@{/titles}" method="POST">
+                    <form th:attr="data-url-base='/titles'" th:action="@{/titles}" method="POST">
                         <input type="hidden" name="_method" value="DELETE"/>
 
                         <div class="modal-content">

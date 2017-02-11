@@ -2,8 +2,10 @@ package com.richard.charge.controller;
 
 import com.richard.charge.model.StatusTitle;
 import com.richard.charge.model.Title;
+import com.richard.charge.repository.filter.TitleFilter;
 import com.richard.charge.service.TitleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -34,15 +36,23 @@ public class TitleController {
         if (result.hasErrors())
             return titleNew(title);
 
-        titleService.save(title);
-        attributes.addFlashAttribute("message", "Título salvo com sucesso!");
+        try {
 
-        return new ModelAndView("redirect:/titles/new") ;
+            titleService.save(title);
+            attributes.addFlashAttribute("message", "Título salvo com sucesso!");
+
+            return new ModelAndView("redirect:/titles/new") ;
+
+        } catch (IllegalArgumentException e) {
+            result.rejectValue("dataVencimento", null, e.getMessage());
+            return new ModelAndView("title/register-title");
+        }
+
     }
 
     @GetMapping
-    public ModelAndView search() {
-        List<Title> titleList = titleService.findAll();
+    public ModelAndView search(@ModelAttribute("filter") TitleFilter filter) {
+        List<Title> titleList = titleService.search(filter);
         ModelAndView mv = new ModelAndView("title/search-title");
         mv.addObject("titleList", titleList);
         return mv;
@@ -59,6 +69,11 @@ public class TitleController {
         titleService.delete(title);
         attributes.addFlashAttribute("message", "Vinho removido com sucesso");
         return "redirect:/titles";
+    }
+
+    @RequestMapping(value = "/{code}/get", method = RequestMethod.PUT)
+    public @ResponseBody String get(@PathVariable Long code) {
+        return titleService.get(code);
     }
 
 
